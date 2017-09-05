@@ -1,0 +1,60 @@
+IntelliJ IDEA 14远程调试Tomcat 7
+
+配置Tomcat 7
+
+Tomcat 7默认远程调试的端口是8000，Tomcat 7已经把jpda配置的属性在catalina.sh/catalina.bat里面已经写好了
+方式1
+
+1、windows系统
+: 启动
+
+catalina.bat jpda start
+: 修改端口号，文件
+catalina.bat
+首行加入以下代码
+set JPDA_ADDRESS=58000
+2、linux系统
+: 启动
+
+catalina.sh jpda start
+: 修改端口号，文件
+catalina.sh
+首行加入以下代码
+JPDA_ADDRESS="58000"
+: 开放端口号，修改
+/etc/sysconfig/iptables
+增加一行代码，然后再重启
+iptables
+服务
+/etc/init.d/iptables restart
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 58000 -j ACCEPT
+方式2
+
+1、windows系统
+: 文件
+
+catalina.bat
+首行加入以下代码
+set "JAVA_OPTS=%JAVA_OPTS% -Xdebug -Xrunjdwp:transport=dt_socket,address=58000,server=y,suspend=n"
+: 启动
+
+startup.bat
+2、linux系统
+: 文件
+
+catalina.sh
+首行加入以下代码
+JAVA_OPTS="${JAVA_OPTS} -Xdebug -Xrunjdwp:transport=dt_socket,address=58000,server=y,suspend=n"
+: 启动
+
+./startup.sh
+: 开放端口号，修改
+/etc/sysconfig/iptables
+增加一行代码，然后再重启
+iptables
+服务
+/etc/init.d/iptables restart
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 58000 -j ACCEPT
+配置IntelliJ IDEA 14
+
+在Run/Debug Configurations中建一个Remote配置，设置好host和port，参考下图，保存之后直接debug即可。
